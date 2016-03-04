@@ -1,0 +1,10 @@
+{
+  "name": "denymount",
+  "description": "Prevent specific disks from mounting",
+  "version": "1.0.0",
+  "repository": "https://github.com/resin-io/denymount",
+  "main": "index.js",
+  "scripts": {
+    "build": "./build.sh"
+  }
+}
