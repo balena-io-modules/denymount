@@ -1,10 +1,11 @@
 denymount
 =========
 
-Node.js library to prevent automatic mounting of specific disks on Mac OS X.
-For Mac OS X >= 10.9.
+> Node.js library to prevent automatic mounting of specific disks on Mac OS X. For Mac OS X >= 10.9.
 
-***
+[![npm version](https://badge.fury.io/js/denymount.svg)](http://badge.fury.io/js/denymount)
+[![dependencies](https://david-dm.org/resin-io-modules/denymount.svg)](https://david-dm.org/resin-io-modules/denymount.svg)
+[![Build Status](https://travis-ci.org/resin-io-modules/denymount.svg?branch=master)](https://travis-ci.org/resin-io-modules/denymount)
 
 Usage
 -----
