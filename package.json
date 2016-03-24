@@ -16,7 +16,7 @@
   "scripts": {
     "build": "make bin/denymount",
     "lint": "eslint **/*.js",
-    "test": "mocha --recursive tests -R progress"
+    "test": "npm run lint && mocha --recursive tests -R progress"
   },
   "keywords": [
     "deny",
