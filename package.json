@@ -15,7 +15,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "make bin/denymount",
-    "lint": "eslint lib/**/*.js",
+    "lint": "eslint **/*.js",
     "test": "mocha --recursive tests -R progress"
   },
   "keywords": [

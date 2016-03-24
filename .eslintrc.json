@@ -2,6 +2,10 @@
   "extends": "standard",
   "rules": {
     "semi": [ 2, "always" ],
-    "space-before-function-paren": [ 2, "never" ]
+    "space-before-function-paren": [ 2, "never" ],
+    "padded-blocks": 0
+  },
+  "env": {
+    "mocha": true
   }
 }
