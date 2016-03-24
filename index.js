@@ -4,7 +4,7 @@ var path = require('path');
 var EXECUTABLE_PATH = path.join(__dirname, 'bin', 'denymount');
 
 // Callback must be in the form (error) -> Void
-module.exports = function(disk, callback) {
+module.exports = function(disk, handler, callback) {
   if (!disk) {
     throw new Error('`disk` cannot be empty.');
   }
@@ -15,6 +15,15 @@ module.exports = function(disk, callback) {
 
   var childProcess = execFile(EXECUTABLE_PATH, [ disk ]);
 
+  handler.call(null, function(error, value) {
+    if (error) {
+      return callback(error);
+    }
+
+    childProcess && childProcess.kill();
+    return callback(null, value);
+  });
+
   childProcess.on('exit', function(status, signal) {
     var error = null;
     if (status) {
@@ -24,8 +33,4 @@ module.exports = function(disk, callback) {
     }
     callback && callback(error);
   });
-
-  return function() {
-    childProcess && childProcess.kill(); // sends SIGTERM
-  };
 };

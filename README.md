@@ -11,11 +11,13 @@ Usage
 
 ```js
 var denymount = require('denymount');
-var cancelFn = denymount(diskName, function(error) {
-  if (!error) {
-    console.log('Mount denied successfully');
-  } else {
-    console.error('Failed to deny mount: ' + error);
+
+denymount(diskName, function(callback) {
+  console.log('During this function, the drive is ensured to stay unmounted');
+  return callback();
+}, function(error) {
+  if (error) {
+    throw error;
   }
 });
 ```
