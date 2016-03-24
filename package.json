@@ -12,10 +12,10 @@
     "type": "git",
     "url": "git://github.com/resin-io-modules/denymount.git"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "make bin/denymount",
-    "lint": "eslint **/*.js"
+    "lint": "eslint lib/**/*.js"
   },
   "keywords": [
     "deny",
