@@ -31,7 +31,7 @@ module.exports = function(disk, handler, callback) {
 
   var childProcess = execFile(EXECUTABLE_PATH, [ disk ]);
 
-  handler.call(null, function(error, value) {
+  handler(function(error, value) {
     if (error) {
       return callback(error);
     }
