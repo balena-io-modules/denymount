@@ -1,10 +1,28 @@
 {
   "name": "denymount",
-  "description": "Prevent specific disks from mounting",
+  "description": "Prevent disks from mounting in OS X",
   "version": "1.0.0",
-  "repository": "https://github.com/resin-io/denymount",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/resin-io-modules/denymount",
+  "author": "Akis Kesoglou <akis@resin.io>",
+  "contributors": [
+    "Juan Cruz Viotti <juan@resin.io>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/resin-io-modules/denymount.git"
+  },
   "main": "index.js",
   "scripts": {
     "build": "./build.sh"
+  },
+  "keywords": [
+    "deny",
+    "mount",
+    "drive",
+    "prevent"
+  ],
+  "directories": {
+    "test": "tests"
   }
 }
