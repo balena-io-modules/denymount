@@ -14,7 +14,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "./build.sh"
+    "build": "make bin/denymount"
   },
   "keywords": [
     "deny",
