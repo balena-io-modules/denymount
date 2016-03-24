@@ -80,6 +80,10 @@ describe('Denymount', function() {
     describe('given the cli is killed with SIGTERM upon handler completion', function() {
 
       it('should not yield a "Command failed" error', function(done) {
+
+        // This test will only pass on OS X
+        if (process.platform !== 'darwin') return done();
+
         denymount('/dev/disk99', function(callback) {
           return callback(null, 'foo');
         }, function(error, result) {
