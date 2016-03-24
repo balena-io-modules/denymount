@@ -14,7 +14,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "make bin/denymount"
+    "build": "make bin/denymount",
+    "lint": "eslint **/*.js"
   },
   "keywords": [
     "deny",
@@ -24,5 +25,11 @@
   ],
   "directories": {
     "test": "tests"
+  },
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-config-standard": "^5.1.0",
+    "eslint-plugin-promise": "^1.1.0",
+    "eslint-plugin-standard": "^1.3.2"
   }
 }
