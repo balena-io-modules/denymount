@@ -69,15 +69,6 @@ int main(int argc, const char *argv[]) {
   return EXIT_SUCCESS;
 }
 
-void DMDenyMount(DASessionRef session, const char *diskName) {
-  printf("Intercepting %s...\n", diskName);
-  DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, diskName);
-  DARegisterDiskMountApprovalCallback(session,
-                                      kDADiskDescriptionMatchVolumeMountable,
-                                      DMMountApprovalCallback,
-                                      (void *)disk);
-}
-
 bool DMAreDisksEqual(DADiskRef disk1, DADiskRef disk2) {
   return strcmp(DADiskGetBSDName(disk1), DADiskGetBSDName(disk2)) == 0;
 }
@@ -90,6 +81,15 @@ DADiskRef DMGetWholeDisk(DADiskRef disk) {
   }
 
   return disk;
+}
+
+void DMDenyMount(DASessionRef session, const char *diskName) {
+  printf("Intercepting %s...\n", diskName);
+  DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, diskName);
+  DARegisterDiskMountApprovalCallback(session,
+                                      kDADiskDescriptionMatchVolumeMountable,
+                                      DMMountApprovalCallback,
+                                      (void *)disk);
 }
 
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
