@@ -102,7 +102,6 @@ DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
   if (DMAreDisksEqual(wholeDisk, watchedDisk)) {
     printf("DENY\n");
     dissenter = DADissenterCreate(kCFAllocatorDefault, kDAReturnExclusiveAccess, NULL);
-    running = false;
   } else {
     printf("OK");
   }

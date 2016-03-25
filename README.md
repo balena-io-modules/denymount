@@ -74,7 +74,7 @@ The command line utility can be used directly as follows:
 $ ./bin/denymount diskName
 ```
 
-The programme will keep running until the given disk appears or you hit `ctrl+C` (or `SIGINT`/`SIGTERM` if sent to background).
+The programme will keep running until you hit `ctrl+C` (or `SIGINT`/`SIGTERM` if sent to background).
 
 Contribute
 ----------
