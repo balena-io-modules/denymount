@@ -105,7 +105,6 @@ DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
     running = false;
   } else {
     printf("OK");
-    dissenter = NULL;
   }
 
   if (wholeDisk) {
