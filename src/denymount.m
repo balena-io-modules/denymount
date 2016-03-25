@@ -111,7 +111,5 @@ DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
     wholeDisk = NULL;
   }
 
-  fflush(stderr);
-
   return dissenter;
 }
