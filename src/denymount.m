@@ -19,6 +19,7 @@
 
 void DMDenyMount(DASessionRef session, const char *diskName);
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context);
+bool DMAreDisksEqual(DADiskRef disk1, DADiskRef disk2);
 
 volatile bool running = true;
 
@@ -69,28 +70,31 @@ int main(int argc, const char *argv[]) {
 
 void DMDenyMount(DASessionRef session, const char *diskName) {
   printf("Intercepting %s...\n", diskName);
+  DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, diskName);
   DARegisterDiskMountApprovalCallback(session,
                                       kDADiskDescriptionMatchVolumeMountable,
                                       DMMountApprovalCallback,
-                                      (void *)diskName);
+                                      (void *)disk);
+}
+
+bool DMAreDisksEqual(DADiskRef disk1, DADiskRef disk2) {
+  return strcmp(DADiskGetBSDName(disk1), DADiskGetBSDName(disk2)) == 0;
 }
 
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
   DADissenterRef dissenter = NULL; // allow by default
+
   DADiskRef device = DADiskCopyWholeDisk(disk);
-
-  const char *watchedDeviceName = context;
-  const char *deviceName;
-
-  if (device) {
-    deviceName = DADiskGetBSDName(device);
-  } else {
-    deviceName = DADiskGetBSDName(disk);
+  if (!device) {
+    device = disk;
   }
 
+  const char *deviceName;
+  deviceName = DADiskGetBSDName(device);
   printf("Request to mount volume %s... ", deviceName);
 
-  if (0 == strcmp(deviceName, watchedDeviceName)) {
+  DADiskRef watchedDisk = context;
+  if (DMAreDisksEqual(device, watchedDisk)) {
     printf("DENY\n");
     dissenter = DADissenterCreate(kCFAllocatorDefault, kDAReturnExclusiveAccess, NULL);
     running = false;
