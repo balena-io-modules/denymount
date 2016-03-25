@@ -106,10 +106,8 @@ DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
     printf("OK");
   }
 
-  if (wholeDisk) {
-    CFRelease(wholeDisk);
-    wholeDisk = NULL;
-  }
+  CFRelease(wholeDisk);
+  wholeDisk = NULL;
 
   return dissenter;
 }
