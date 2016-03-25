@@ -95,12 +95,10 @@ DADiskRef DMGetWholeDisk(DADiskRef disk) {
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
   DADissenterRef dissenter = NULL; // allow by default
   DADiskRef wholeDisk = DMGetWholeDisk(disk);
-
-  const char *deviceName;
-  deviceName = DADiskGetBSDName(wholeDisk);
-  printf("Request to mount volume %s... ", deviceName);
-
   DADiskRef watchedDisk = context;
+
+  printf("Request to mount volume %s... ", DADiskGetBSDName(wholeDisk));
+
   if (DMAreDisksEqual(wholeDisk, watchedDisk)) {
     printf("DENY\n");
     dissenter = DADissenterCreate(kCFAllocatorDefault, kDAReturnExclusiveAccess, NULL);
