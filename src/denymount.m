@@ -77,22 +77,18 @@ void DMDenyMount(DASessionRef session, const char *diskName) {
 
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
   DADissenterRef dissenter = NULL; // allow by default
-  DADiskRef device;
+  DADiskRef device = DADiskCopyWholeDisk(disk);
 
   const char *watchedDeviceName = context;
-  const char *volumeName = DADiskGetBSDName(disk);
   const char *deviceName;
 
-  {
-    device = DADiskCopyWholeDisk(disk);
-    if (device) {
-      deviceName = DADiskGetBSDName(device);
-    } else {
-      deviceName = volumeName;
-    }
+  if (device) {
+    deviceName = DADiskGetBSDName(device);
+  } else {
+    deviceName = DADiskGetBSDName(disk);
   }
 
-  fprintf(stderr, "Request to mount volume %s... ", volumeName);
+  fprintf(stderr, "Request to mount volume %s... ", deviceName);
 
   if (0 == strcmp(deviceName, watchedDeviceName)) {
     fprintf(stderr, "denied\n");
