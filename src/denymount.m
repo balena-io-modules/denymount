@@ -68,7 +68,7 @@ int main(int argc, const char *argv[]) {
 }
 
 void DMDenyMount(DASessionRef session, const char *diskName) {
-  fprintf(stderr, "Waiting for %s...\n", diskName);
+  printf("Intercepting %s...\n", diskName);
   DARegisterDiskMountApprovalCallback(session,
                                       kDADiskDescriptionMatchVolumeMountable,
                                       DMMountApprovalCallback,
@@ -88,14 +88,14 @@ DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
     deviceName = DADiskGetBSDName(disk);
   }
 
-  fprintf(stderr, "Request to mount volume %s... ", deviceName);
+  printf("Request to mount volume %s... ", deviceName);
 
   if (0 == strcmp(deviceName, watchedDeviceName)) {
-    fprintf(stderr, "denied\n");
+    printf("DENY\n");
     dissenter = DADissenterCreate(kCFAllocatorDefault, kDAReturnExclusiveAccess, NULL);
     running = false;
   } else {
-    fprintf(stderr, "OK\n");
+    printf("OK");
     dissenter = NULL;
   }
 
