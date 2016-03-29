@@ -19,6 +19,8 @@
 
 void DMDenyMount(DASessionRef session, const char *diskName);
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context);
+bool DMAreDisksEqual(DADiskRef disk1, DADiskRef disk2);
+DADiskRef DMGetWholeDisk(DADiskRef disk);
 
 volatile bool running = true;
 
@@ -29,6 +31,7 @@ int main(int argc, const char *argv[]) {
   }
 
   @autoreleasepool {
+
     // Create a serial queue to schedule callbacks on
     dispatch_queue_t queue = dispatch_queue_create("denymount", DISPATCH_QUEUE_SERIAL);
 
@@ -67,48 +70,115 @@ int main(int argc, const char *argv[]) {
   return EXIT_SUCCESS;
 }
 
+/**
+ * Check that two DADiskRef's are equal.
+ *
+ * We consider two disks to be equal if they share the same BSD name.
+ *
+ * @private
+ * @param disk1 The first disk.
+ * @param disk2 The second disk.
+ * @returns Whether the two disks are equal or not.
+ */
+bool DMAreDisksEqual(DADiskRef disk1, DADiskRef disk2) {
+  return strcmp(DADiskGetBSDName(disk1), DADiskGetBSDName(disk2)) == 0;
+}
+
+/**
+ * Attempt to get the whole disk from a DADiskRef.
+ *
+ * If our disk represents `/dev/disk2s3`, then the whole disk
+ * represents `/dev/disk2`.
+ *
+ * If the passed disk is already the whole disk, then the same
+ * disk is returned.
+ *
+ * The caller implicitly retains the object and is responsible
+ * for releasing it with `CFRelease()`.
+ *
+ * @private
+ * @param disk The disk.
+ * @return The whole disk object.
+ */
+DADiskRef DMGetWholeDisk(DADiskRef disk) {
+  DADiskRef whole = DADiskCopyWholeDisk(disk);
+
+  if (whole) {
+    return whole;
+  }
+
+  return disk;
+}
+
+/**
+ * Set an interceptor to prevent a disk from being mounted
+ *
+ * The disk name can be either a BSD name, like `disk2` or the full
+ * path to the device file, like `/dev/disk2`.
+ *
+ * Notice that partitions of a disk will be denied if you pass the
+ * whole disk to this function. So if you intercept `disk2`, `disk2s1`
+ * will be denied as well.
+ *
+ * See `DMMountApprovalCallback` for an explanation on how this
+ * is performed.
+ *
+ * @param session  The DiskArbitration session.
+ * @param diskName The disk name.
+ */
 void DMDenyMount(DASessionRef session, const char *diskName) {
-  fprintf(stderr, "Waiting for %s...\n", diskName);
+  printf("Intercepting %s...\n", diskName);
+
+  // Creating a `DADiskRef` disk object from a BSD name allows us to
+  // gracefully handle full path to device files.
+  DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, diskName);
+
+  // Registers a callback function to be called whenever
+  // a volume is to be mounted.
   DARegisterDiskMountApprovalCallback(session,
                                       kDADiskDescriptionMatchVolumeMountable,
                                       DMMountApprovalCallback,
-                                      (void *)diskName);
+                                      (void *)disk);
 }
 
+/**
+ * The Deny Mount callback.
+ *
+ * This function is called each time a disk attempts to be mounted,
+ * as configured by `DMDenyMount`.
+ *
+ * The function checks that the disk matches the one we're trying to
+ * intercept, and if so, returns a `DADissenter` object informing
+ * exclusive access over the disk, therefore causing the disk to not
+ * get mounted.
+ *
+ * If the disks don't match, a `NULL` `DADissenter` is returned.
+ *
+ * @private
+ * @param disk    The disk that attempts to get mounted.
+ * @param context The context passed from the callback registration.
+ * @returns       The DADissenter object with exclusive access.
+ */
 DADissenterRef DMMountApprovalCallback(DADiskRef disk, void *context) {
-  DADissenterRef dissenter = NULL; // allow by default
-  DADiskRef device;
+  DADiskRef wholeDisk = DMGetWholeDisk(disk);
 
-  const char *watchedDeviceName = context;
-  const char *volumeName = DADiskGetBSDName(disk);
-  const char *deviceName;
+  // A `NULL` dissenter causes the disk to be mounted.
+  // We set this by default, unless the disk matches.
+  DADissenterRef dissenter = NULL;
 
-  {
-    device = DADiskCopyWholeDisk(disk);
-    if (device) {
-      deviceName = DADiskGetBSDName(device);
-    } else {
-      deviceName = volumeName;
-    }
-  }
+  printf("Request to mount volume %s... ", DADiskGetBSDName(wholeDisk));
 
-  fprintf(stderr, "Request to mount volume %s... ", volumeName);
-
-  if (0 == strcmp(deviceName, watchedDeviceName)) {
-    fprintf(stderr, "denied\n");
+  if (DMAreDisksEqual(wholeDisk, context)) {
+    printf("DENY\n");
     dissenter = DADissenterCreate(kCFAllocatorDefault, kDAReturnExclusiveAccess, NULL);
-    running = false;
   } else {
-    fprintf(stderr, "OK\n");
-    dissenter = NULL;
+    printf("OK");
   }
 
-  if (device) {
-    CFRelease(device);
-    device = NULL;
-  }
-
-  fflush(stderr);
+  // The result from `DMGetWholeDisk` needs to be manually released.
+  // See the documentation of tha function for more information.
+  CFRelease(wholeDisk);
+  wholeDisk = NULL;
 
   return dissenter;
 }

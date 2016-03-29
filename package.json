@@ -41,5 +41,8 @@
   },
   "dependencies": {
     "async": "^2.0.0-rc.2"
+  },
+  "optionalDependencies": {
+    "macmount": "^1.0.0"
   }
 }
