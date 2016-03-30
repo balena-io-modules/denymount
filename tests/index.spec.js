@@ -39,20 +39,10 @@ describe('Denymount', function() {
     beforeEach(function() {
       this.platformStub = sinon.stub(os, 'platform');
       this.platformStub.returns('darwin');
-
-      try {
-        var macmount = require('macmount');
-        this.macmountStub = sinon.stub(macmount, 'mount');
-        this.macmountStub.yields(null);
-      } catch (error) {}
     });
 
     afterEach(function() {
       this.platformStub.restore();
-
-      if (this.macmountStub) {
-        this.macmountStub.restore();
-      }
     });
 
     describe('given executing the cli tool throws an error', function() {
