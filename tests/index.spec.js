@@ -84,16 +84,22 @@ describe('Denymount', function() {
         });
       });
 
+      it('should not call macmount even if autoMountOnSuccess is true', function(done) {
+        var self = this;
+        denymount('/dev/disk2', function() {}, {
+          autoMountOnSuccess: true
+        }, function() {
+          chai.expect(self.macmountStub).to.not.have.been.called;
+          done();
+        });
+      });
+
     });
 
     // We simulate this condition by simply running the real cli tool
     describe('given the cli is killed with SIGTERM upon handler completion', function() {
 
       it('should not yield a "Command failed" error', function(done) {
-
-        // This test will only pass on OS X
-        if (process.platform !== 'darwin') return done();
-
         denymount('/dev/disk99', function(callback) {
           return callback(null, 'foo');
         }, function(error, result) {
@@ -101,7 +107,30 @@ describe('Denymount', function() {
           chai.expect(result).to.equal('foo');
           done();
         });
+      });
 
+      it('should not call macmount if autoMountOnSuccess is false', function(done) {
+        var self = this;
+        denymount('/dev/disk99', function(callback) {
+          return callback(null, 'foo');
+        }, {
+          autoMountOnSuccess: false
+        }, function() {
+          chai.expect(self.macmountStub).to.not.have.been.called;
+          done();
+        });
+      });
+
+      it('should call macmount if autoMountOnSuccess is true', function(done) {
+        var self = this;
+        denymount('/dev/disk99', function(callback) {
+          return callback(null, 'foo');
+        }, {
+          autoMountOnSuccess: true
+        }, function() {
+          chai.expect(self.macmountStub).to.have.been.calledOnce;
+          done();
+        });
       });
 
     });

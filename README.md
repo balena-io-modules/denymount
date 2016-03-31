@@ -21,22 +21,26 @@ Documentation
 
 <a name="module_denymount..denymount"></a>
 
-### denymount~denymount(disk, handler, callback)
+### denymount~denymount(disk, handler, [options], callback)
 **Kind**: inner method of <code>[denymount](#module_denymount)</code>  
 **Summary**: Prevent automatic mounting of an OS X disk  
 **Access:** public  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| disk | <code>String</code> | disk |
-| handler | <code>function</code> | handler (callback) |
-| callback | <code>function</code> | callback (error) |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| disk | <code>String</code> |  | disk |
+| handler | <code>function</code> |  | handler (callback) |
+| [options] | <code>Object</code> |  | options |
+| [options.autoMountOnSuccess] | <code>Boolean</code> | <code>false</code> | auto-mount on exit |
+| callback | <code>function</code> |  | callback (error) |
 
 **Example**  
 ```js
 denymount('/dev/disk2', function(callback) {
   console.log('While this code runs, /dev/disk2 is ensured to not be auto-mounted');
   return callback(null, 'foo');
+}, {
+  autoMountOnSuccess: true
 }, function(error, message) {
   if (error) {
     throw error;

@@ -1,9 +1,28 @@
-language: node_js
+language: cpp
+sudo: false
+
+env:
+  - NODE_VERSION="4"
+  - NODE_VERSION="0.12"
+  - NODE_VERSION="0.10"
+os:
+  - osx
+
 before_install:
-  - npm install -g npm@latest
-node_js:
-  - "0.12"
-  - "0.11"
-  - "0.10"
+  - rm -rf ~/.nvm
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
+  - source ~/.nvm/nvm.sh
+  - nvm --version
+  - nvm install $NODE_VERSION
+  - node --version
+  - npm --version
+  - npm config set spin=false
+
+install:
+  - npm install
+
+script:
+  - npm test
+
 notifications:
   email: false
