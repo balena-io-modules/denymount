@@ -31,7 +31,8 @@ Documentation
 | disk | <code>String</code> |  | disk |
 | handler | <code>function</code> |  | handler (callback) |
 | [options] | <code>Object</code> |  | options |
-| [options.autoMountOnSuccess] | <code>Boolean</code> | <code>false</code> | auto-mount on exit |
+| [options.autoMountOnSuccess] | <code>Boolean</code> | <code>false</code> | auto-mount on success |
+| [options.executablePath] | <code>String</code> |  | alternative path to the `denymount` binary executable invoked at runtime |
 | callback | <code>function</code> |  | callback (error) |
 
 **Example**  

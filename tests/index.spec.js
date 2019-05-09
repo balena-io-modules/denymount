@@ -1,7 +1,7 @@
 var chai = require('chai');
 var sinon = require('sinon');
 chai.use(require('sinon-chai'));
-var child_process = require('child_process');
+var childProcess = require('child_process');
 var os = require('os');
 var denymount = require('../lib/index');
 
@@ -19,15 +19,15 @@ describe('Denymount', function() {
     });
 
     it('should call the handler, but not execute the child process', function(done) {
-      sinon.spy(child_process, 'execFile');
+      sinon.spy(childProcess, 'execFile');
 
       denymount('/dev/disk2', function(callback) {
         return callback(null, 'foo');
       }, function(error, result) {
         chai.expect(error).to.not.exist;
         chai.expect(result).to.equal('foo');
-        chai.expect(child_process.execFile).to.not.have.been.called;
-        child_process.execFile.restore();
+        chai.expect(childProcess.execFile).to.not.have.been.called;
+        childProcess.execFile.restore();
         done();
       });
     });
@@ -59,7 +59,7 @@ describe('Denymount', function() {
 
       beforeEach(function() {
         this.error = new Error('An error happened!');
-        this.execFileStub = sinon.stub(child_process, 'execFile');
+        this.execFileStub = sinon.stub(childProcess, 'execFile');
         this.execFileStub.yields(this.error);
       });
 
