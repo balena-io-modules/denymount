@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.0] - 2016-03-31
 
+## 2.3.0 - 2019-05-09
+
+* Add option to specify an alternative denymount executable path [Paulo Castro]
+
 ### Added
 
 - Add `autoMountOnSuccess` option.
